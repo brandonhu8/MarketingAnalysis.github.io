@@ -138,7 +138,7 @@
   <figure>
     <img
       class="shot-full"
-      src="Images/OverviewDashboard.png"
+      src="images/OverviewDashboard.png"
       alt="Marketing Analysis – Overview dashboard with KPI tiles, ROAS, CAC, and funnel snapshot" />
     <figcaption class="note">
       This dashboard is a static preview for portfolio purposes only.
@@ -235,14 +235,14 @@ ORDER BY Price ASC; -- Orders results by price in ascending order
 
   <div class="grid-2" style="margin-top:20px;">
     <figure>
-      <img src="Images/Products_Table_Before.png" 
+      <img src="images/Products_Table_Before.png" 
            alt="Products table before cleaning" 
            style="max-width:400px; border-radius:8px;" />
       <figcaption>Before: Redundant category, raw prices</figcaption>
     </figure>
 
     <figure>
-      <img src="Images/Products_Table_After.png" 
+      <img src="images/Products_Table_After.png" 
            alt="Products table after cleaning" 
            style="max-width:400px; border-radius:8px;" />
       <figcaption>After: Price tiers enable easier grouping and visuals</figcaption>
@@ -300,11 +300,11 @@ LEFT JOIN
       <div class="grid-2" style="margin-top:10px">
         <!-- TODO: Replace images -->
         <figure>
-          <img class="shot" src="Images/Customer_Geography_Table_Before.png" alt="Customers table before join">
+          <img class="shot" src="images/Customer_Geography_Table_Before.png" alt="Customers table before join">
           <figcaption>Before: Demographics only</figcaption>
         </figure>
         <figure>
-          <img class="shot" src="Images/Customer_Geography_Table_After.png" alt="Customers + Geography after join">
+          <img class="shot" src="images/Customer_Geography_Table_After.png" alt="Customers + Geography after join">
           <figcaption>After: Country/City enable regional segmentation</figcaption>
         </figure>
       </div>
@@ -346,11 +346,11 @@ FROM
       <div class="grid-2" style="margin-top:10px">
         <!-- TODO: Replace images -->
         <figure>
-          <img class="shot" src="Images/Customer_Reviews_Table_Before.png" alt="Reviews before cleanup">
+          <img class="shot" src="images/Customer_Reviews_Table_Before.png" alt="Reviews before cleanup">
           <figcaption>Before: inconsistent spacing and formatting</figcaption>
         </figure>
         <figure>
-          <img class="shot" src="Images/Customer_Reviews_Table_After.png" alt="Reviews after cleanup">
+          <img class="shot" src="images/Customer_Reviews_Table_After.png" alt="Reviews after cleanup">
           <figcaption>After: standardized text, ready for NLP</figcaption>
         </figure>
       </div>
@@ -407,14 +407,14 @@ WHERE ContentType != 'Newsletter';
 
   <div class="grid-2" style="margin-top:20px;">
     <figure>
-      <img src="Images/Engagement_Data_Table_Before.png" 
+      <img src="images/Engagement_Data_Table_Before.png" 
            alt="Engagement data before cleaning" 
            style="max-width:400px; border-radius:8px;" />
       <figcaption>Before: Inconsistent categories, combined fields, raw dates</figcaption>
     </figure>
 
     <figure>
-      <img src="Images/Engagement_Data_Table_After.png" 
+      <img src="images/Engagement_Data_Table_After.png" 
            alt="Engagement data after cleaning" 
            style="max-width:400px; border-radius:8px;" />
       <figcaption>After: Standardized content types, split fields, formatted dates</figcaption>
@@ -502,7 +502,7 @@ ORDER BY JourneyID;
   <div class="grid-2" style="margin-top:20px;">
     <figure>
       <!-- BEFORE image slot -->
-      <img src="Images/Customer_Journey_Table_Before.png"
+      <img src="images/Customer_Journey_Table_Before.png"
            alt="Customer journey table before cleaning"
            style="max-width:400px; border-radius:8px;" />
       <figcaption>Before: Mixed casing, duplicates, and missing durations</figcaption>
@@ -510,7 +510,7 @@ ORDER BY JourneyID;
 
     <figure>
       <!-- AFTER image slot -->
-      <img src="Images/Customer_Journey_Table_After.png"
+      <img src="images/Customer_Journey_Table_After.png"
            alt="Customer journey table after cleaning"
            style="max-width:400px; border-radius:8px;" />
       <figcaption>After: Uppercased stages, deduplicated rows, imputed durations</figcaption>
@@ -627,7 +627,7 @@ reviews.to_csv('fact_customer_reviews_with_sentiment.csv', index=False)
       <h3>Model diagram</h3>
       <figure>
         <img
-          src="Images/Data_Model.png"
+          src="images/Data_Model.png"
           alt="Power BI star schema: dimensions (Customers, Products, Calendar) relating to fact tables"
           style="width:100%; max-width:520px; height:auto; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,.12);"
         />
