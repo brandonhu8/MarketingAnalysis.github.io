@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marketing Analysis Business Case</title>
+  <style>
+    :root{
+      --bg:#FDF2E9; --ink:#333; --muted:#555;
+      --accent:#FFEB99; --max:1100px; --radius:12px;
+      --bar-h:52px; /* sticky topbar height */
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; background:var(--bg); color:var(--ink);
+      font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    /* Top bar */
+    #topbar{
+      position:sticky; top:0; z-index:99;
+      background:linear-gradient(90deg, var(--accent), #fff);
+      padding:8px 12px; border-bottom:1px solid #0001;
+    }
+    #topbar .wrap{
+      max-width:var(--max); margin:0 auto;
+      display:flex; gap:8px; align-items:center;
+      flex-wrap:nowrap; overflow-x:auto; white-space:nowrap;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:thin;
+    }
+    #topbar a{
+      flex:0 0 auto;
+      display:inline-block; padding:10px 12px; font-size:14px;
+      color:#111; text-decoration:none; border-radius:8px;
+    }
+    #topbar a:hover, #topbar a:focus-visible{ background:#f9c22e; outline:none }
+
+    main{max-width:var(--max); margin:0 auto; padding:24px 16px}
+    h1{
+      text-align:center; text-decoration:underline; margin:8px 0 18px;
+      font-size:clamp(20px, 4.5vw, 28px);
+    }
+    h2{ margin:24px 0 8px; font-size:clamp(18px, 3.8vw, 24px); }
+    h3{ margin:18px 0 8px; font-size:clamp(16px, 3.3vw, 20px); }
+    p{color:var(--muted)}
+
+    /* Ensure anchor targets aren't hidden under sticky bar */
+    section{ scroll-margin-top: calc(var(--bar-h) + 14px); }
+
+    /* Card blocks */
+    .card{
+      background:#fff; border:1px solid #0001; border-radius:var(--radius);
+      padding:16px; margin-bottom:16px; box-shadow:0 8px 24px #0000000f;
+    }
+
+    /* Viz containers */
+    .viz{
+      width:100%; aspect-ratio:16/9; background:#fff; border:1px solid #0002;
+      border-radius:10px; overflow:hidden;
+    }
+
+    /* Images */
+    img{max-width:100%; height:auto; display:block}
+    .shot{ width:100%; border:1px solid #0002; border-radius:10px; background:#fafafa; }
+    .shot-full{
+      width:100%; max-width:900px; height:auto; display:block;
+      margin:0 auto; border:1px solid #0002; border-radius:10px; background:#fafafa;
+    }
+    figure{margin:0}
+    figure figcaption{font-size:.9rem; color:#666; margin-top:6px}
+    .note{ text-align:center; font-size:.95rem; opacity:.8; margin:8px 0 0 }
+
+    /* Grids */
+    .grid-2, .grid-3{ display:grid; gap:14px }
+    @media (min-width:900px){
+      .grid-2{ grid-template-columns:1fr 1fr }
+      .grid-3{ grid-template-columns:repeat(3,1fr) }
+    }
+
+    /* Pre/code */
+    pre{
+      background:#0f172a; color:#e5e7eb; padding:14px; border-radius:10px;
+      border:1px solid #0003; font-size:13px; line-height:1.5;
+      overflow:auto; white-space:pre-wrap; word-break:break-word;
+    }
+    code{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace }
+
+    /* Chips */
+    .chip{
+      display:inline-block; padding:4px 8px; border-radius:999px; background:#fff8;
+      border:1px solid #0001; font-size:12px; color:#333; margin:2px 6px 0 0;
+    }
+
+    /* Mobile spacing */
+    @media (max-width:700px){
+      main{ padding:18px 12px }
+      .card{ padding:14px }
+    }
+
+    /* Reduce motion preference */
+    @media (prefers-reduced-motion: reduce){
+      html{ scroll-behavior:auto }
+    }
+  </style>
+
+  <!-- Tableau API only if you keep Tableau (can remove if using Power BI only) -->
+  <script src="https://public.tableau.com/javascripts/api/tableau-2.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const mount = document.getElementById('tableauMount');
+      if (mount){
+        const url = "https://public.tableau.com/views/Socio-DemographicVariablesandSalary/Dashboard1?:showVizHome=no&:embed=y";
+        try { new tableau.Viz(mount, url, {hideTabs:true, width:"100%", height:"100%"}); } catch(e){}
+      }
+    });
+  </script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="topbar" aria-label="Page sections">
+  <div class="wrap">
+    <a href="#dashboard">Dashboard</a>
+    <a href="#intro">Introduction</a>
+    <a href="#sources">Data Sources &amp; Tables</a>
+    <a href="#sql-products">Products Table</a>
+    <a href="#sql-geo">Customers + Geography Table</a>
+    <a href="#sql-reviews">Customer Reviews Table</a>
+    <a href="#sql-engagement">Engagement Data Table</a>
+    <a href="#sql-customer-journey">Customer Journey Data</a>
+    <a href="#py-sentiment">Sentiment Analysis</a>
+    <a href="#pbix-model">Power BI Data Model</a>
+    <a href="#conclusions">Conclusions &amp; Recommendations</a>
+  </div>
+</nav>
+
+<main>
+  <h1>Marketing Analysis Business Case</h1>
+
+  <!-- 1) DASHBOARD -->
+  <section id="dashboard" class="card">
+    <h2>Power BI Dashboard</h2>
+    <figure>
+      <img
+        class="shot-full"
+        src="Images/OverviewDashboard.png"
+        alt="Marketing Analysis – Overview dashboard with KPI tiles, ROAS, CAC, and funnel snapshot" />
+      <figcaption class="note">
+        This dashboard is a static preview for portfolio purposes only.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- 2) INTRO -->
+  <section id="intro" class="card">
+    <h2>Introduction</h2>
+    <p>
+      ShopEasy, a growing online retail business, is facing declining customer engagement and conversion rates despite significant investments in marketing campaigns. With expenses climbing but returns falling, the company recognizes the need for a <strong>data-driven approach</strong>.
+    </p>
+    <p>In this project, I leverage:</p>
+    <ul>
+      <li><strong>SQL Server</strong> → data cleaning and transformations</li>
+      <li><strong>Python</strong> → advanced sentiment analysis</li>
+      <li><strong>Power BI</strong> → interactive dashboards</li>
+    </ul>
+    <p>
+      The outcome is a stakeholder-ready analysis that provides actionable recommendations to improve engagement, boost conversions, and maximize ROI.
+    </p>
+  </section>
+
+  <!-- 3) DATA SOURCES & TABLES -->
+  <section id="sources" class="card">
+    <h2>Data Sources &amp; Tables</h2>
+    <p>Our dataset is organized into two main categories:</p>
+
+    <h3>Fact/Calculation Tables</h3>
+    <ul>
+      <li><strong>Customer Journey Table</strong> → Track customer movements through the website to analyze the conversion funnel.</li>
+      <li><strong>Engagement Data Table</strong> → Measure engagement with different types of content.</li>
+      <li><strong>Customer Reviews Table</strong> → Analyze customer feedback to identify common themes and sentiment.</li>
+    </ul>
+
+    <h3>Lookup Tables</h3>
+    <ul>
+      <li><strong>Customers Table</strong> → Provide additional information about customers.</li>
+      <li><strong>Geography Table</strong> → Provide additional geographic information about customers.</li>
+      <li><strong>Products Table</strong> → Provide additional information about products.</li>
+    </ul>
+  </section>
+
+  <!-- 4) CLEANING DATA WITH SQL -->
+  <section id="sql-products" class="card">
+    <h2>Data Cleaning with SQL — Products Table</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Problem</h3>
+        <p>Redundant <code>Category</code> column and raw <code>Price</code> values made segmentation hard.</p>
+        <h3>Approach</h3>
+        <ul>
+          <li>Drop constant <code>Category</code></li>
+          <li>Bucket <code>Price</code> into Low / Medium / High</li>
+          <li>Sort for readability</li>
+        </ul>
+      </div>
+      <div>
+        <h3>SQL Snippet</h3>
+<pre><code>-- Query to categorize products based on their price
+SELECT
+    ProductID,   -- Selects the unique identifier for each product
+    ProductName, -- Selects the name of each product
+    Price,       -- Selects the price of each product
+    -- Category, -- Selects the product category for each product (dropped as redundant)
+    CASE
+        WHEN Price &lt; 50 THEN 'Low'
+        WHEN Price BETWEEN 50 AND 200 THEN 'Medium'
+        ELSE 'High'
+    END AS PriceCategory
+FROM dbo.products
+ORDER BY Price ASC;</code></pre>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:20px;">
+      <figure>
+        <img src="Images/Products_Table_Before.png" alt="Products table before cleaning" style="max-width:400px; border-radius:8px;" />
+        <figcaption>Before: Redundant category, raw prices</figcaption>
+      </figure>
+
+      <figure>
+        <img src="Images/Products_Table_After.png" alt="Products table after cleaning" style="max-width:400px; border-radius:8px;" />
+        <figcaption>After: Price tiers enable easier grouping and visuals</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 4.2 Customers + Geography -->
+  <section id="sql-geo" class="card">
+    <h2>Data Cleaning with SQL — Customers + Geography Table</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Problem</h3>
+        <p>Customers lacked location context for regional analysis.</p>
+        <h3>Approach</h3>
+        <ul>
+          <li>Validate <code>GeographyID</code> keys</li>
+          <li>Join Customers ↔ Geography</li>
+          <li>Expose <code>Country</code>, <code>City</code> for BI</li>
+        </ul>
+      </div>
+      <div>
+        <h3>SQL Snippet</h3>
+<pre><code>-- Join customers with geography to enrich with region fields
+SELECT
+  c.CustomerID, c.CustomerName, c.Email, c.Gender, c.Age,
+  g.Country, g.City
+FROM dbo.customers AS c
+LEFT JOIN dbo.geography AS g
+  ON c.GeographyID = g.GeographyID;</code></pre>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:10px">
+      <figure>
+        <img class="shot" src="Images/Customer_Geography_Table_Before.png" alt="Customers table before join">
+        <figcaption>Before: Demographics only</figcaption>
+      </figure>
+      <figure>
+        <img class="shot" src="Images/Customer_Geography_Table_After.png" alt="Customers + Geography after join">
+        <figcaption>After: Country/City enable regional segmentation</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 4.3 Customer Reviews -->
+  <section id="sql-reviews" class="card">
+    <h2>Data Cleaning with SQL — Customer Reviews Table</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Problem</h3>
+        <p>Unstructured text and mixed types made the table hard to analyze.</p>
+        <h3>Approach</h3>
+        <ul>
+          <li>Normalize text spacing with <code>REPLACE</code></li>
+          <li>Ensure <code>Rating</code> is integer</li>
+          <li>Preserve text for NLP + ratings for quant analysis</li>
+        </ul>
+      </div>
+      <div>
+        <h3>SQL Snippet</h3>
+<pre><code>SELECT
+  ReviewID, CustomerID, ProductID, ReviewDate, Rating,
+  REPLACE(ReviewText, '  ', ' ') AS ReviewText
+FROM dbo.customer_reviews;</code></pre>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:10px">
+      <figure>
+        <img class="shot" src="Images/Customer_Reviews_Table_Before.png" alt="Reviews before cleanup">
+        <figcaption>Before: inconsistent spacing and formatting</figcaption>
+      </figure>
+      <figure>
+        <img class="shot" src="Images/Customer_Reviews_Table_After.png" alt="Reviews after cleanup">
+        <figcaption>After: standardized text, ready for NLP</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 4.4 Engagement Data -->
+  <section id="sql-engagement" class="card">
+    <h2>Data Cleaning with SQL — Engagement Data</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Problem</h3>
+        <p>Inconsistent <code>ContentType</code>, combined fields, raw dates, and irrelevant rows.</p>
+        <h3>Approach</h3>
+        <ul>
+          <li>Standardize <code>ContentType</code> spelling/casing</li>
+          <li>Split combined Views/Clicks</li>
+          <li>Format <code>EngagementDate</code></li>
+          <li>Filter out newsletters</li>
+        </ul>
+      </div>
+      <div>
+        <h3>SQL Snippet</h3>
+<pre><code>SELECT
+  EngagementID, ContentID, CampaignID, ProductID,
+  UPPER(REPLACE(ContentType, 'Socialmedia', 'Social Media')) AS ContentType,
+  LEFT(ViewsClicksCombined, CHARINDEX('-', ViewsClicksCombined) - 1) AS Views,
+  RIGHT(ViewsClicksCombined, LEN(ViewsClicksCombined) - CHARINDEX('-', ViewsClicksCombined)) AS Clicks,
+  Likes,
+  FORMAT(CONVERT(DATE, EngagementDate), 'dd.MM.yyyy') AS EngagementDate
+FROM dbo.engagement_data
+WHERE ContentType != 'Newsletter';</code></pre>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:20px;">
+      <figure>
+        <img src="Images/Engagement_Data_Table_Before.png" alt="Engagement data before cleaning" style="max-width:400px; border-radius:8px;" />
+        <figcaption>Before: Inconsistent categories, combined fields, raw dates</figcaption>
+      </figure>
+      <figure>
+        <img src="Images/Engagement_Data_Table_After.png" alt="Engagement data after cleaning" style="max-width:400px; border-radius:8px;" />
+        <figcaption>After: Standardized content types, split fields, formatted dates</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 4.5 Customer Journey Data -->
+  <section id="sql-customer-journey" class="card">
+    <h2>Data Cleaning with SQL — Customer Journey Data</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Problem</h3>
+        <p>Mixed casing in <code>Stage</code>, duplicate rows, and missing <code>Duration</code>.</p>
+        <h3>Approach</h3>
+        <ul>
+          <li>Normalize <code>Stage</code> to uppercase</li>
+          <li>Deduplicate with <code>ROW_NUMBER()</code></li>
+          <li>Impute missing <code>Duration</code> with daily average</li>
+        </ul>
+      </div>
+      <div>
+        <h3>SQL Snippet</h3>
+<pre><code>-- Final standardized Customer Journey dataset
+SELECT JourneyID, CustomerID, ProductID, VisitDate, Stage, Action,
+       COALESCE(avg_duration, Duration) AS Duration
+FROM (
+  SELECT
+    JourneyID, CustomerID, ProductID, VisitDate,
+    UPPER(Stage) AS Stage, Action, Duration,
+    AVG(Duration) OVER (PARTITION BY VisitDate) AS avg_duration,
+    ROW_NUMBER() OVER (
+      PARTITION BY CustomerID, ProductID, VisitDate, UPPER(Stage), Action
+      ORDER BY JourneyID
+    ) AS row_num
+  FROM dbo.customer_journey
+) s
+WHERE row_num = 1;</code></pre>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:20px;">
+      <figure>
+        <img src="Images/Customer_Journey_Table_Before.png" alt="Customer journey table before cleaning" style="max-width:400px; border-radius:8px;" />
+        <figcaption>Before: Mixed casing, duplicates, and missing durations</figcaption>
+      </figure>
+      <figure>
+        <img src="Images/Customer_Journey_Table_After.png" alt="Customer journey table after cleaning" style="max-width:400px; border-radius:8px;" />
+        <figcaption>After: Uppercased stages, deduplicated rows, imputed durations</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 5) ADVANCED SENTIMENT (PYTHON) -->
+  <section id="py-sentiment" class="card">
+    <h2>Sentiment Analysis with Python — Customer Reviews</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Why Sentiment Analysis?</h3>
+        <p>
+          Ratings alone don’t tell the whole story—two 4★ reviews can read very differently.
+          Sentiment analysis lets us quantify the tone of <code>ReviewText</code>.
+        </p>
+        <ul>
+          <li>Spot rating–text mismatches</li>
+          <li>Trend satisfaction over time/by product</li>
+          <li>Create richer features for BI and modeling</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Python Snippet</h3>
+<pre><code>import pandas as pd
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+nltk.download('vader_lexicon')
+
+reviews = pd.read_csv("fact_customer_reviews.csv")
+sia = SentimentIntensityAnalyzer()
+
+reviews['SentimentScore'] = reviews['ReviewText'].apply(
+    lambda r: sia.polarity_scores(r)['compound']
+)
+
+def categorize(score, rating):
+    if score > 0.05:  return 'Positive' if rating >= 4 else 'Mixed'
+    if score < -0.05: return 'Negative' if rating <= 2 else 'Mixed'
+    return 'Neutral'
+
+reviews['SentimentCategory'] = reviews.apply(
+    lambda row: categorize(row['SentimentScore'], row['Rating']), axis=1)
+
+def bucket(score):
+    if score >= 0.5:   return '0.5 to 1.0'
+    if score >= 0.0:   return '0.0 to 0.49'
+    if score >= -0.5:  return '-0.49 to 0.0'
+    return '-1.0 to -0.5'
+
+reviews['SentimentBucket'] = reviews['SentimentScore'].apply(bucket)
+reviews.to_csv('fact_customer_reviews_with_sentiment.csv', index=False)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6) Power BI Data Model -->
+  <section id="pbix-model" class="card">
+    <h2>Power BI Data Model</h2>
+    <div class="grid-2">
+      <div>
+        <h3>What this model shows</h3>
+        <p>
+          A lean star schema: <em>fact</em> tables (journeys, engagement, reviews)
+          relate to <em>dimensions</em> (customers, products, calendar). This keeps
+          filtering clear and visuals fast.
+        </p>
+        <h3>How it’s built</h3>
+        <ul>
+          <li><strong>Load &amp; Transform:</strong> mirror SQL cleaning steps in Power Query.</li>
+          <li><strong>Relationships:</strong> link on keys like <code>CustomerID</code>, <code>ProductID</code>, <code>Date</code>.</li>
+          <li><strong>Cardinality:</strong> one (dim) → many (fact), single-direction filters.</li>
+          <li><strong>Date table:</strong> dedicated Calendar marked as Date table.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Model diagram</h3>
+        <figure>
+          <img src="Images/Data_Model.png" alt="Power BI star schema: dimensions relating to fact tables" style="width:100%; max-width:520px; height:auto; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,.12);" />
+          <figcaption>Dimensions filter facts via one-to-many, single-direction relationships.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7) Conclusions & Recommendations -->
+  <section id="conclusions" class="card">
+    <h2>Conclusions &amp; Recommendations</h2>
+    <div>
+      <h3>Conclusions</h3>
+      <ul>
+        <li>SQL cleaning simplified datasets and created consistent fields.</li>
+        <li>Python sentiment added context beyond star ratings.</li>
+        <li>A star schema in Power BI keeps filtering clear and fast.</li>
+      </ul>
+
+      <h3>Recommendations</h3>
+      <ul>
+        <li><strong>Automate refreshes:</strong> keep transforms in Power Query.</li>
+        <li><strong>Track sentiment trends:</strong> by product/campaign over time.</li>
+        <li><strong>Iterate model:</strong> add dims (campaigns, demographics) as data grows.</li>
+        <li><strong>Monitor quality:</strong> validate casing, nulls, and keys before load.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
